@@ -116,10 +116,23 @@ select {
   font-weight: 600;
 }
 
-select {
+select,
+input[type="search"] {
   background: var(--panel-strong);
   color: var(--ink);
   border: 1px solid rgba(31, 42, 31, 0.1);
+}
+
+input[type="search"] {
+  border-radius: 14px;
+  padding: 12px 16px;
+  font: inherit;
+  outline: none;
+}
+
+input[type="search"]:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(32, 92, 59, 0.12);
 }
 
 .checkbox {

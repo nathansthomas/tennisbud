@@ -30,6 +30,7 @@ const state = {
   subwayLayer: null,
   wardLayer: null,
   torontoBounds: null,
+  initialFitDone: false,
 };
 
 const elements = {
@@ -38,6 +39,7 @@ const elements = {
   sortSelect: document.querySelector("#sortSelect"),
   distanceRange: document.querySelector("#distanceRange"),
   distanceValue: document.querySelector("#distanceValue"),
+  searchInput: document.querySelector("#searchInput"),
   minCourtsRange: document.querySelector("#minCourtsRange"),
   minCourtsValue: document.querySelector("#minCourtsValue"),
   lightsOnly: document.querySelector("#lightsOnly"),
@@ -125,6 +127,7 @@ function renderTorontoBoundary(wardsData) {
 
 function wireEvents() {
   elements.locateBtn.addEventListener("click", useMyLocation);
+  elements.searchInput.addEventListener("input", renderCourts);
   elements.modeSelect.addEventListener("change", renderCourts);
   elements.sortSelect.addEventListener("change", renderCourts);
   elements.distanceRange.addEventListener("input", () => {
@@ -159,10 +162,15 @@ function renderCourts() {
   const minCourts = Number(elements.minCourtsRange.value);
   const mode = elements.modeSelect.value;
   const sort = elements.sortSelect.value;
+  const searchTerm = elements.searchInput.value.trim().toLowerCase();
 
   const enriched = state.courts
     .map((court) => enrichCourt(court, mode))
     .filter((court) => {
+      if (searchTerm && !court.name.toLowerCase().includes(searchTerm) && !court.address.toLowerCase().includes(searchTerm)) {
+        return false;
+      }
+
       if (court.courts < minCourts) {
         return false;
       }
@@ -208,17 +216,13 @@ function paintMap(courts) {
     state.markersById.set(court.id, marker);
   });
 
-  const layersForBounds = [...state.markersById.values()];
-  if (state.userLocation) {
-    layersForBounds.push(userMarker);
-  }
-
-  const bounds = L.featureGroup(layersForBounds).getBounds();
-  if (bounds.isValid()) {
-    const paddedBounds = bounds.pad(0.12);
-    map.fitBounds(state.torontoBounds ? paddedBounds.pad(0) : paddedBounds, {
-      animate: false,
-    });
+  if (!state.initialFitDone) {
+    const layersForBounds = [...state.markersById.values()];
+    const bounds = L.featureGroup(layersForBounds).getBounds();
+    if (bounds.isValid()) {
+      map.fitBounds(bounds.pad(0.06), { animate: false });
+    }
+    state.initialFitDone = true;
   }
 
   if (state.userLocation && !map.hasLayer(userMarker)) {
