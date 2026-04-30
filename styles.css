@@ -30,13 +30,24 @@ body {
 .app-shell {
   display: grid;
   grid-template-columns: minmax(340px, 430px) minmax(0, 1fr);
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .sidebar {
   padding: 24px;
-  overflow-y: auto;
   backdrop-filter: blur(8px);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
 .hero {
@@ -166,6 +177,36 @@ input[type="search"]:focus {
   line-height: 1.45;
 }
 
+.court-count-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.count-pill {
+  border: 1px solid rgba(31, 42, 31, 0.15);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: var(--panel-strong);
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 120ms, color 120ms, border-color 120ms;
+}
+
+.count-pill:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.count-pill.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
 .results-list {
   display: grid;
   gap: 12px;
@@ -242,6 +283,8 @@ input[type="search"]:focus {
   display: grid;
   grid-template-rows: auto 1fr;
   padding: 20px 20px 20px 0;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .map-header {

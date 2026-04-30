@@ -29,6 +29,8 @@
           </p>
         </div>
 
+        <div class="sidebar-scroll">
+
         <section class="panel controls">
           <button id="locateBtn" class="primary-btn" type="button">Use my location</button>
 
@@ -63,11 +65,17 @@
             <strong id="distanceValue">15 km</strong>
           </label>
 
-          <label class="field">
+          <div class="field">
             <span>Min courts per park</span>
-            <input id="minCourtsRange" type="range" min="1" max="10" step="1" value="1" />
-            <strong id="minCourtsValue">1+</strong>
-          </label>
+            <div class="court-count-pills" id="courtCountPills">
+              <button class="count-pill active" data-min="1" type="button">Any</button>
+              <button class="count-pill" data-min="2" type="button">2+</button>
+              <button class="count-pill" data-min="3" type="button">3+</button>
+              <button class="count-pill" data-min="4" type="button">4+</button>
+              <button class="count-pill" data-min="6" type="button">6+</button>
+              <button class="count-pill" data-min="8" type="button">8+</button>
+            </div>
+          </div>
 
           <label class="field checkbox">
             <input id="lightsOnly" type="checkbox" />
@@ -114,6 +122,8 @@
           </div>
           <div id="resultsList" class="results-list"></div>
         </section>
+
+        </div><!-- /.sidebar-scroll -->
       </aside>
 
       <main class="map-panel">

@@ -40,8 +40,7 @@ const elements = {
   distanceRange: document.querySelector("#distanceRange"),
   distanceValue: document.querySelector("#distanceValue"),
   searchInput: document.querySelector("#searchInput"),
-  minCourtsRange: document.querySelector("#minCourtsRange"),
-  minCourtsValue: document.querySelector("#minCourtsValue"),
+  courtCountPills: document.querySelector("#courtCountPills"),
   lightsOnly: document.querySelector("#lightsOnly"),
   publicOnly: document.querySelector("#publicOnly"),
   courtCount: document.querySelector("#courtCount"),
@@ -134,8 +133,11 @@ function wireEvents() {
     elements.distanceValue.textContent = `${elements.distanceRange.value} km`;
     renderCourts();
   });
-  elements.minCourtsRange.addEventListener("input", () => {
-    elements.minCourtsValue.textContent = `${elements.minCourtsRange.value}+`;
+  elements.courtCountPills.addEventListener("click", (e) => {
+    const pill = e.target.closest(".count-pill");
+    if (!pill) return;
+    elements.courtCountPills.querySelectorAll(".count-pill").forEach((p) => p.classList.remove("active"));
+    pill.classList.add("active");
     renderCourts();
   });
   elements.lightsOnly.addEventListener("change", renderCourts);
@@ -159,7 +161,8 @@ function renderSubway(subwayData) {
 
 function renderCourts() {
   const maxDistanceKm = Number(elements.distanceRange.value);
-  const minCourts = Number(elements.minCourtsRange.value);
+  const activePill = elements.courtCountPills.querySelector(".count-pill.active");
+  const minCourts = activePill ? Number(activePill.dataset.min) : 1;
   const mode = elements.modeSelect.value;
   const sort = elements.sortSelect.value;
   const searchTerm = elements.searchInput.value.trim().toLowerCase();
