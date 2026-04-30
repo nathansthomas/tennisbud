@@ -38,6 +38,8 @@ const elements = {
   sortSelect: document.querySelector("#sortSelect"),
   distanceRange: document.querySelector("#distanceRange"),
   distanceValue: document.querySelector("#distanceValue"),
+  minCourtsRange: document.querySelector("#minCourtsRange"),
+  minCourtsValue: document.querySelector("#minCourtsValue"),
   lightsOnly: document.querySelector("#lightsOnly"),
   publicOnly: document.querySelector("#publicOnly"),
   courtCount: document.querySelector("#courtCount"),
@@ -129,6 +131,10 @@ function wireEvents() {
     elements.distanceValue.textContent = `${elements.distanceRange.value} km`;
     renderCourts();
   });
+  elements.minCourtsRange.addEventListener("input", () => {
+    elements.minCourtsValue.textContent = `${elements.minCourtsRange.value}+`;
+    renderCourts();
+  });
   elements.lightsOnly.addEventListener("change", renderCourts);
   elements.publicOnly.addEventListener("change", renderCourts);
 }
@@ -150,12 +156,17 @@ function renderSubway(subwayData) {
 
 function renderCourts() {
   const maxDistanceKm = Number(elements.distanceRange.value);
+  const minCourts = Number(elements.minCourtsRange.value);
   const mode = elements.modeSelect.value;
   const sort = elements.sortSelect.value;
 
   const enriched = state.courts
     .map((court) => enrichCourt(court, mode))
     .filter((court) => {
+      if (court.courts < minCourts) {
+        return false;
+      }
+
       if (elements.lightsOnly.checked && !court.hasLights) {
         return false;
       }
@@ -170,14 +181,13 @@ function renderCourts() {
 
       return true;
     })
-    .sort((a, b) => compareCourts(a, b, sort))
-    .slice(0, 40);
+    .sort((a, b) => compareCourts(a, b, sort));
 
   state.visibleCourts = enriched;
   elements.visibleCount.textContent = String(enriched.length);
   elements.resultsMeta.textContent = state.userLocation
-    ? `Showing up to 40 courts within ${maxDistanceKm} km of you.`
-    : "Using central Toronto until you share your location.";
+    ? `Showing ${enriched.length} courts within ${maxDistanceKm} km of you.`
+    : `Showing all ${enriched.length} matching courts across Toronto.`;
 
   paintMap(enriched);
   paintList(enriched);
