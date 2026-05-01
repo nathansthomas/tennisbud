@@ -20,6 +20,25 @@
   <body>
     <div class="app-shell">
       <aside class="sidebar">
+
+        <!-- Mobile-only top bar -->
+        <div class="mobile-bar">
+          <div class="mobile-brand">
+            <span class="eyebrow">Toronto tennis</span>
+            <strong class="mobile-title">TennisBud</strong>
+          </div>
+          <span class="mobile-count-badge" id="mobileCountBadge">— courts</span>
+        </div>
+
+        <!-- Mobile-only tab switcher -->
+        <div class="mobile-tabs" id="mobileTabs">
+          <button class="tab-btn active" data-tab="filters" type="button">Filters</button>
+          <button class="tab-btn" data-tab="results" type="button">
+            Courts <span class="tab-count" id="tabCount"></span>
+          </button>
+        </div>
+
+        <!-- Desktop-only hero -->
         <div class="hero">
           <p class="eyebrow">Toronto tennis finder</p>
           <h1>TennisBud</h1>
@@ -31,97 +50,105 @@
 
         <div class="sidebar-scroll">
 
-        <section class="panel controls">
-          <button id="locateBtn" class="primary-btn" type="button">Use my location</button>
+          <!-- Filter pane (both desktop visible; mobile tab-gated) -->
+          <div class="tab-pane active" id="filterPane">
+            <section class="panel controls">
+              <button id="locateBtn" class="primary-btn" type="button">Use my location</button>
 
-          <label class="field">
-            <span>Search by name</span>
-            <input id="searchInput" type="search" placeholder="e.g. Malvern, High Park…" />
-          </label>
+              <label class="field">
+                <span>Search by name</span>
+                <input id="searchInput" type="search" placeholder="e.g. Malvern, High Park…" />
+              </label>
 
-          <label class="field">
-            <span>Travel mode</span>
-            <select id="modeSelect">
-              <option value="walk">Walk</option>
-              <option value="bike">Bike</option>
-              <option value="drive">Drive</option>
-              <option value="transit">Transit</option>
-            </select>
-          </label>
+              <div class="controls-row">
+                <label class="field">
+                  <span>Travel mode</span>
+                  <select id="modeSelect">
+                    <option value="walk">Walk</option>
+                    <option value="bike">Bike</option>
+                    <option value="drive">Drive</option>
+                    <option value="transit">Transit</option>
+                  </select>
+                </label>
 
-          <label class="field">
-            <span>Sort by</span>
-            <select id="sortSelect">
-              <option value="smart">Best overall</option>
-              <option value="distance">Distance</option>
-              <option value="courts">Most courts</option>
-              <option value="quiet">Lowest crowd estimate</option>
-            </select>
-          </label>
+                <label class="field">
+                  <span>Sort by</span>
+                  <select id="sortSelect">
+                    <option value="smart">Best overall</option>
+                    <option value="distance">Distance</option>
+                    <option value="courts">Most courts</option>
+                    <option value="quiet">Quietest</option>
+                  </select>
+                </label>
+              </div>
 
-          <label class="field">
-            <span>Max distance</span>
-            <input id="distanceRange" type="range" min="2" max="30" step="1" value="15" />
-            <strong id="distanceValue">15 km</strong>
-          </label>
+              <label class="field">
+                <span>Max distance</span>
+                <input id="distanceRange" type="range" min="2" max="30" step="1" value="15" />
+                <strong id="distanceValue">15 km</strong>
+              </label>
 
-          <div class="field">
-            <span>Min courts per park</span>
-            <div class="court-count-pills" id="courtCountPills">
-              <button class="count-pill active" data-min="1" type="button">Any</button>
-              <button class="count-pill" data-min="2" type="button">2+</button>
-              <button class="count-pill" data-min="3" type="button">3+</button>
-              <button class="count-pill" data-min="4" type="button">4+</button>
-              <button class="count-pill" data-min="6" type="button">6+</button>
-              <button class="count-pill" data-min="8" type="button">8+</button>
-            </div>
+              <div class="field">
+                <span>Min courts per park</span>
+                <div class="court-count-pills" id="courtCountPills">
+                  <button class="count-pill active" data-min="1" type="button">Any</button>
+                  <button class="count-pill" data-min="2" type="button">2+</button>
+                  <button class="count-pill" data-min="3" type="button">3+</button>
+                  <button class="count-pill" data-min="4" type="button">4+</button>
+                  <button class="count-pill" data-min="6" type="button">6+</button>
+                  <button class="count-pill" data-min="8" type="button">8+</button>
+                </div>
+              </div>
+
+              <div class="checkbox-row">
+                <label class="field checkbox">
+                  <input id="lightsOnly" type="checkbox" />
+                  <span>Lights only</span>
+                </label>
+                <label class="field checkbox">
+                  <input id="publicOnly" type="checkbox" />
+                  <span>Public only</span>
+                </label>
+              </div>
+            </section>
+
+            <section class="panel insight-strip">
+              <div>
+                <span class="metric-label">Total courts</span>
+                <strong id="courtCount">0</strong>
+              </div>
+              <div>
+                <span class="metric-label">Shown now</span>
+                <strong id="visibleCount">0</strong>
+              </div>
+              <div>
+                <span class="metric-label">Rush window</span>
+                <strong id="rushWindow">Checking…</strong>
+              </div>
+            </section>
+
+            <section class="panel summary">
+              <h2>How the crowd estimate works</h2>
+              <p>
+                A heuristic based on time of day, day of week, number of courts,
+                lights, court type, central-city pull, and subway proximity.
+              </p>
+              <p id="statusText" class="status-text">
+                Loading City of Toronto tennis court data...
+              </p>
+            </section>
           </div>
 
-          <label class="field checkbox">
-            <input id="lightsOnly" type="checkbox" />
-            <span>Only show courts with lights</span>
-          </label>
-
-          <label class="field checkbox">
-            <input id="publicOnly" type="checkbox" />
-            <span>Only show public courts</span>
-          </label>
-        </section>
-
-        <section class="panel insight-strip">
-          <div>
-            <span class="metric-label">Courts loaded</span>
-            <strong id="courtCount">0</strong>
+          <!-- Results pane (both desktop visible; mobile tab-gated) -->
+          <div class="tab-pane" id="resultsPane">
+            <section class="results panel">
+              <div class="results-header">
+                <h2>Best options</h2>
+                <p id="resultsMeta">Waiting for location...</p>
+              </div>
+              <div id="resultsList" class="results-list"></div>
+            </section>
           </div>
-          <div>
-            <span class="metric-label">Shown now</span>
-            <strong id="visibleCount">0</strong>
-          </div>
-          <div>
-            <span class="metric-label">Rush window</span>
-            <strong id="rushWindow">Checking…</strong>
-          </div>
-        </section>
-
-        <section class="panel summary">
-          <h2>How the crowd estimate works</h2>
-          <p>
-            This first version uses a heuristic, not live camera or booking data. It
-            weighs time of day, day of week, number of courts, lights, court type,
-            central-city pull, and subway proximity.
-          </p>
-          <p id="statusText" class="status-text">
-            Loading City of Toronto tennis court data...
-          </p>
-        </section>
-
-        <section class="results panel">
-          <div class="results-header">
-            <h2>Best options</h2>
-            <p id="resultsMeta">Waiting for location...</p>
-          </div>
-          <div id="resultsList" class="results-list"></div>
-        </section>
 
         </div><!-- /.sidebar-scroll -->
       </aside>

@@ -49,6 +49,11 @@ const elements = {
   statusText: document.querySelector("#statusText"),
   resultsMeta: document.querySelector("#resultsMeta"),
   resultsList: document.querySelector("#resultsList"),
+  mobileTabs: document.querySelector("#mobileTabs"),
+  mobileCountBadge: document.querySelector("#mobileCountBadge"),
+  tabCount: document.querySelector("#tabCount"),
+  filterPane: document.querySelector("#filterPane"),
+  resultsPane: document.querySelector("#resultsPane"),
 };
 
 const userMarker = L.circleMarker([43.7001, -79.4163], {
@@ -142,6 +147,15 @@ function wireEvents() {
   });
   elements.lightsOnly.addEventListener("change", renderCourts);
   elements.publicOnly.addEventListener("change", renderCourts);
+
+  elements.mobileTabs.addEventListener("click", (e) => {
+    const btn = e.target.closest(".tab-btn");
+    if (!btn) return;
+    const tab = btn.dataset.tab;
+    elements.mobileTabs.querySelectorAll(".tab-btn").forEach((b) => b.classList.toggle("active", b === btn));
+    elements.filterPane.classList.toggle("active", tab === "filters");
+    elements.resultsPane.classList.toggle("active", tab === "results");
+  });
 }
 
 function renderSubway(subwayData) {
@@ -199,6 +213,8 @@ function renderCourts() {
   elements.resultsMeta.textContent = state.userLocation
     ? `Showing ${enriched.length} courts within ${maxDistanceKm} km of you.`
     : `Showing all ${enriched.length} matching courts across Toronto.`;
+  elements.mobileCountBadge.textContent = `${enriched.length} courts`;
+  elements.tabCount.textContent = `(${enriched.length})`;
 
   paintMap(enriched);
   paintList(enriched);
@@ -256,7 +272,7 @@ function paintList(courts) {
     button.innerHTML = `
       <div class="result-topline">
         <h3 class="result-title">${escapeHtml(court.name)}</h3>
-        <span class="pill ${court.crowdBucket.toLowerCase()}">${court.crowdBucket}</span>
+        <span class="pill ${court.crowdBucket === "Busy" ? "busy" : court.crowdBucket === "Medium" ? "medium" : "low"}">${court.crowdBucket}</span>
       </div>
       <p class="result-meta">${escapeHtml(court.address)}</p>
       <div class="badge-row">
@@ -337,7 +353,7 @@ function enrichCourt(court, mode) {
           : "transit weaker",
     crowdScore,
     crowdBucket:
-      crowdScore >= 72 ? "Busy" : crowdScore >= 45 ? "Medium" : "Lower crowd",
+      crowdScore >= 72 ? "Busy" : crowdScore >= 45 ? "Medium" : "Quiet",
     smartScore:
       100 -
       Math.min(60, distanceKm * 3.3) -
